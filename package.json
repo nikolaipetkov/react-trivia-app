@@ -1,9 +1,12 @@
 {
   "name": "react-trivia",
+  "homepage": "https://nikolaipetkov.github.io/react-trivia-app",
   "version": "",
   "scripts": {
     "build": "webpack",
-    "start": "webpack-dev-server --open --mode development"
+    "start": "webpack-dev-server --open --mode development",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "devDependencies": {
     "@babel/core": "^7.1.0",
@@ -16,6 +19,7 @@
     "axios": "^0.18.0",
     "babel-loader": "^8.0.2",
     "css-loader": "^1.0.0",
+    "gh-pages": "^2.0.1",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
     "postcss-calc": "^6.0.2",
