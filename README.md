@@ -1,4 +1,4 @@
-##Clone Project
+## Clone Project
 
 ```
 git clone https://github.com/nikolaipetkov/react-trivia-app.git
