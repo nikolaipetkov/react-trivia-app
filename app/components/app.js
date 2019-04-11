@@ -1,81 +1,98 @@
-import React, { PureComponent } from "react";
-import { connect } from "react-redux";
-import { add } from "../actions/add";
+// Render Prop
+import React from "react";
+import Button from "@material-ui/core/Button";
 
-import './app.css';
-import '../index.css'
+import QuestionsList from "./QuestionsList";
 
-class App extends PureComponent {
-    constructor(props) {
-        super(props);
+class TriviaApp extends React.PureComponent {
+  state = {
+    quizStart: null,
+    quizEnd: null,
+    totalTimeInMilliseconds: null
+  };
 
-        this.state = {
-            platformType: ''
-        };
+  startQuiz = () => {
+    this.setState({
+      quizStart: Date.now()
+    });
+  };
 
-        this.addPlatform = this.addPlatform.bind(this);
-        this.handleChange = this.handleChange.bind(this);
+  resetQuiz = () => {
+    this.setState({
+      quizStart: null,
+      quizEnd: null,
+      totalTimeInMilliseconds: null
+    });
+  };
+
+  endQuiz = () => {
+    this.setState(
+      {
+        quizEnd: Date.now()
+      },
+      () => {
+        this.setState({
+          totalTimeInMilliseconds: this.state.quizEnd - this.state.quizStart
+        });
+      }
+    );
+  };
+
+  formatTime = milliseconds => {
+    let seconds = parseInt(milliseconds / 1000);
+    let hours = parseInt(seconds / 3600);
+    seconds = seconds % 3600;
+    let minutes = parseInt(seconds / 60);
+    seconds = seconds % 60;
+
+    if (hours && minutes && seconds) {
+      return `Your time: ${hours} ${hours > 1 ? "hours" : "hour"} ${minutes} ${
+        minutes > 1 ? "minutes" : "minute"
+      } ${seconds} ${seconds > 1 ? "seconds" : "second"}`;
     }
-    
-    
+    if (!hours && minutes && seconds) {
+      return `Your time: ${minutes} ${
+        minutes > 1 ? "minutes" : "minute"
+      } ${seconds} ${seconds > 1 ? "seconds" : "second"}`;
+    }
+    if (!hours && !minutes && seconds) {
+      return `Your time: ${seconds} seconds`;
+    }
+  };
 
-    componentDidMount() {
-        console.warn('props :', this.props)
+  renderContent = () => {
+    const { quizStart, quizEnd, totalTimeInMilliseconds } = this.state;
+
+    if (!quizStart) {
+      return (
+        <Button variant="contained" color="primary" onClick={this.startQuiz}>
+          Start Quiz
+        </Button>
+      );
     }
 
-    componentDidUpdate() {
-        console.warn('update :', this.props)
+    if (quizEnd) {
+      return (
+        <React.Fragment>
+          <div>{this.formatTime(totalTimeInMilliseconds)}</div>
+          <Button variant="contained" color="primary" onClick={this.resetQuiz}>
+            Play Again
+          </Button>
+        </React.Fragment>
+      );
     }
+  };
 
-    addPlatform(){
-    	const { platformType } = this.state;
+  render() {
+    const { quizStart, quizEnd, totalTimeInMilliseconds } = this.state;
 
-    	platformType && this.props.add({ platform: platformType });
-
-    	this.setState({
-    		platformType: ''
-    	})
-    }
-
-    handleChange(event){
-    	this.setState({
-    		platformType: event.target.value
-    	})
-    }
-
-
-    render() {
-    	const { platformType } = this.state;
-    	const { whatever } = this.props;
-        return (
-        	<div>
-				<div className="test">
-					{
-						whatever && whatever.map((entry, index) => <span className="test" key={index}>{entry.platform + ' '}</span>)
-					}
-	            </div>
-                <div className="ok"> greeeeeen</div>
-	            <input  
-		            type="text"
-		            className="form-control"
-		            id="platformType"
-		            value={platformType}
-		            onChange={this.handleChange}
-		        />
-	            <button onClick={this.addPlatform}>add platform</button>
-        	</div>
-        );
-    }
+    return (
+      <React.Fragment>
+        {quizStart && <QuestionsList endQuiz={this.endQuiz} />}
+        {this.renderContent()}
+      </React.Fragment>
+    );
+  }
 }
 
-
-export default connect(
-    state => ({
-        whatever: state.root,
-    }),
-    dispatch => {
-        return {
-            add: payload => dispatch(add(payload))
-        };
-    },
-)(App);
+export default TriviaApp;
