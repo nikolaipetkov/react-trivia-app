@@ -1,5 +1,5 @@
 ##Clone Project
-TODO
+git clone https://github.com/nikolaipetkov/react-trivia-app.git
 
 ## Dev setup
 
@@ -7,9 +7,3 @@ TODO
 npm install
 npm start
 ```
-
-## Production build
-
-```
-npm install
-npm run build
